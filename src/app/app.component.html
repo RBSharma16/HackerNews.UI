@@ -1,1 +1,25 @@
-<router-outlet></router-outlet>
+<main class="main">
+    <ng-container *ngIf="newsItems.length > 0 else loadingArea">    
+      <div class="container">
+        <div class="left-side"> 
+          <div class="heading">Hacker News</div>     
+          <div class="search"><input type="text" class="text-search" placeholder="search title....." (input)="onSearchChange($event.target)"></div>
+        </div>
+        <table>
+          <tr>
+            <th>Id</th>
+            <th>Title</th>
+          </tr>
+            <tr *ngFor="let item of newsItems| paginate: { itemsPerPage: pageSize, currentPage: pageNo, totalItems: total }">
+              <td>{{item.id}}</td>
+              <td><a href="{{item.url}}" target="_blank">{{item.title}}</a></td>
+            </tr>
+        </table>
+        <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
+      </div>
+    </ng-container>
+    <ng-template #loadingArea>
+      <div class="loader">
+      </div>
+    </ng-template>
+    </main>
