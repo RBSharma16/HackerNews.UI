@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { HackerNewsService } from './services/hacker-news.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -56,14 +56,27 @@ describe('AppComponent', () => {
 
   it('should handle search change event with value', () => {
     const searchValue = { value: 'angular' };
+    component.pageNo = 1;
     component.onSearchChange(searchValue);
     expect(hackerNewsServiceSpy.getAllNewsItems).toHaveBeenCalledWith(1, 20, 'angular');
   });
 
   it('should handle search change event without value', () => {
     const searchValue = { value: '' };
-    component.pageNo = 2;
+    component.pageNo = 1;
     component.onSearchChange(searchValue);
-    expect(hackerNewsServiceSpy.getAllNewsItems).toHaveBeenCalledWith(2, 20, '');
+    expect(hackerNewsServiceSpy.getAllNewsItems).toHaveBeenCalledWith(1, 20, '');
   });
+
+  it('should handle error when fetching news items', () => {
+    const searchQuery = '';
+    const error = { message: 'Error fetching news items' };
+    component.pageNo = 1;
+    component.pageSize = 20;
+  
+    hackerNewsServiceSpy.getAllNewsItems.and.returnValue(throwError(() => error));  
+    spyOn(console, 'error');
+    component.getNewsItems(component.pageNo, searchQuery);  
+    expect(console.error).toHaveBeenCalledWith('Error fetching news items:', error);
+  });  
 });

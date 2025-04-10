@@ -14,18 +14,25 @@ export class AppComponent {
   pageNo: number = 1;
   total: number = 0;
   pageSize: number = 20;
+  errorMessage: string = ""
   constructor(protected hackerNewsService: HackerNewsService){
   }
 
   ngOnInit() {
-    this.getNewsItems(1);
+    this.getNewsItems(this.pageNo);
   }
 
-  getNewsItems(pageNumber: number, searchQuery: string = ""){    
-     this.hackerNewsService.getAllNewsItems(pageNumber,this.pageSize, searchQuery).subscribe(response => {
+  getNewsItems(pageNumber: number, searchQuery: string = ""){     
+    this.hackerNewsService.getAllNewsItems(pageNumber, this.pageSize, searchQuery).subscribe({
+      next: (response) => {
         this.newsItems = response.items;
         this.total = response.total;
-    })
+      },
+      error: (error) => {
+        this.errorMessage = "Some error in fetching news items. Please reload or try after some time.";
+        console.error('Error fetching news items:', error);
+      }
+    });    
   }
 
   pageChangeEvent(event: number){
@@ -34,8 +41,9 @@ export class AppComponent {
   }
 
   onSearchChange(searchValue:any){
+    this.pageNo = 1;
     if(searchValue.value){
-      this.getNewsItems(1, searchValue.value)
+      this.getNewsItems(this.pageNo, searchValue.value)
     }
     else{
       this.getNewsItems(this.pageNo);

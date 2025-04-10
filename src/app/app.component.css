@@ -47,6 +47,13 @@ table {
     margin: 15% 48%;
 }
 
+.error-div{
+    text-align: center;
+    font-size: 20px;
+    color: #984c4c;
+    margin-top: 20px;
+}
+
 /* Safari */
 @-webkit-keyframes spin {
     0% {
